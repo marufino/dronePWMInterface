@@ -8,7 +8,7 @@
 
 #define INS_PER_US            200
 #define INS_PER_LOOP          2
-#define PRU0_R31_VEC_VALID    32;
+#define PRU0_R31_VEC_VALID    32
 #define PRU_EVTOUT_0          3
 #define PRU_EVTOUT_1          4       
 
@@ -40,21 +40,22 @@ START:
    MOV    r4, 0                           // r4 will store the echo pulse width for channel 2
    SBBO   r4, r0, 4, 4                    // initialize to 0
    MOV    r5, 0                           // r5 will store the echo pulse width for channel 3
-   SBBO   r5, r0, 8, 4                    // initialize to 0
+   SBBO   r5, r0, 8, 4                     // initialize to 0
    MOV    r6, 0                           // r6 will store the echo pulse width for channel 4
    SBBO   r6, r0, 12, 4                   // initialize to 0
+
+   MOV r31.b0,0
 
 
    MEASURE:
 
-      CHANNEL1:               
+     CHANNEL1:               
          QBBS ADDCHAN1, r31.t5               // If r31.t5 is high then count (measuring echo pulse width)
                                             
             QBEQ NOPULSE1, r3, 0             // if pulse has not started do nothing
          
                SBBO   r3, r0, 0, 4           // if pulse is done (not high) store to memory
                MOV    r3, -1                 // reset channel counter ( -1 since ADDCHAN adds 1 after)
-               MOV R31.b0, PRU0_R31_VEC_VALID | PRU_EVTOUT_1 // generate interrupt
 
          ADDCHAN1:
             ADD r3, r3, 1                    // Increment channel counter
@@ -68,7 +69,6 @@ START:
          
                SBBO   r4, r0, 4, 4           // if pulse is done (not high) store to memory
                MOV    r4, -1                 // reset channel counter ( -1 since ADDCHAN adds 1 after)
-               MOV R31.b0, PRU0_R31_VEC_VALID | PRU_EVTOUT_1 // generate interrupt
 
          ADDCHAN2:
             ADD r4, r4, 1                    // Increment channel counter
@@ -82,7 +82,6 @@ START:
          
                SBBO   r5, r0, 8, 4           // if pulse is done (not high) store to memory
                MOV    r5, -1                 // reset channel counter ( -1 since ADDCHAN adds 1 after)
-               MOV R31.b0, PRU0_R31_VEC_VALID | PRU_EVTOUT_1 // generate interrupt
 
          ADDCHAN3:
             ADD r5, r5, 1                    // Increment channel counter
@@ -96,7 +95,7 @@ START:
          
                SBBO   r6, r0, 12, 4           // if pulse is done (not high) store to memory
                MOV    r6, -1                 // reset channel counter ( -1 since ADDCHAN adds 1 after)
-               MOV R31.b0, PRU0_R31_VEC_VALID | PRU_EVTOUT_1 // generate interrupt
+               //MOV R31.b0, PRU0_R31_VEC_VALID | PRU_EVTOUT_0 // generate interrupt
 
          ADDCHAN4:
             ADD r6, r6, 1                    // Increment channel counter
@@ -109,5 +108,5 @@ START:
       QBNE   MEASURE, r1, 0            // loop if the no of iterations has not passed
 
 END:
-   MOV R31.b0, PRU0_R31_VEC_VALID | PRU_EVTOUT_0
+   //MOV R31.b0, PRU0_R31_VEC_VALID | PRU_EVTOUT_1
    HALT

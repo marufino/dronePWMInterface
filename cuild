@@ -1,0 +1,4 @@
+#!/bin/sh
+pasm -b timer.p
+gcc pruTest.c -o pruTest -lpthread -lprussdrv
+

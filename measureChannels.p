@@ -8,7 +8,7 @@
 
 #define INS_PER_US            200
 #define INS_PER_LOOP          2
-#define PRU0_R31_VEC_VALID    32;
+#define PRU0_R31_VEC_VALID    32
 #define PRU_EVTOUT_0          3
 #define PRU_EVTOUT_1          4       
 
@@ -27,7 +27,6 @@
 // r16 : signal period
 
 
-
 START:
    // Read number of samples to read
    MOV    r0, 0x00000000                  //load the memory location, number of samples
@@ -43,6 +42,13 @@ START:
    SBBO   r5, r0, 8, 4                    // initialize to 0
    MOV    r6, 1                        // r6 will store the echo pulse width for channel 4
    SBBO   r6, r0, 12, 4                   // initialize to 0                          
+
+   MOV    r11, 100000
+   MOV    r12, 100000
+   MOV    r13, 100000
+   MOV    r14, 100000
+
+   MOV r31.b0, 0
 
    MEASURE:
 
@@ -114,12 +120,12 @@ START:
 
             MAKEHIGH1:                          // if low
                SET r30.t15                      // make high
-               LBBO r11,r0,0,4                  // load latest duty cycle for channel
+               LBBO r11,r0,20,4                  // load latest duty cycle for channel
                QBA NOCHANGE1                    
 
             MAKELOW1:
                CLR r30.t15                      // make low 
-               LBBO r11,r0,0,4                  // load latest duty cycle for channel
+               LBBO r11,r0,20,4                  // load latest duty cycle for channel
                SUB r11,r16,r11                  // set timer = period - duty cycle
 
          NOCHANGE1:
@@ -133,12 +139,12 @@ START:
 
             MAKEHIGH2:                          // if low
                SET r30.t14                      // make high
-               LBBO r12,r0,4,4                  // load latest duty cycle for channel
+               LBBO r12,r0,24,4                  // load latest duty cycle for channel
                QBA NOCHANGE2                    
 
             MAKELOW2:
                CLR r30.t14                      // make low 
-               LBBO r12,r0,4,4                  // load latest duty cycle for channel
+               LBBO r12,r0,24,4                  // load latest duty cycle for channel
                SUB r12,r16,r12                  // set timer = period - duty cycle
 
          NOCHANGE2:
@@ -152,12 +158,12 @@ START:
 
             MAKEHIGH3:                           // if low
                SET r30.t7                      // make high
-               LBBO r13,r0,8,4                  // load latest duty cycle for channel
+               LBBO r13,r0,28,4                  // load latest duty cycle for channel
                QBA NOCHANGE3                    
 
             MAKELOW3:
                CLR r30.t7                      // make low 
-               LBBO r13,r0,8,4                  // load latest duty cycle for channel
+               LBBO r13,r0,28,4                  // load latest duty cycle for channel
                SUB r13,r16,r13                  // set timer = period - duty cycle
 
          NOCHANGE3:
@@ -171,12 +177,12 @@ START:
 
             MAKEHIGH4:                           // if low
                SET r30.t0                      // make high
-               LBBO r14,r0,12,4                  // load latest duty cycle for channel
+               LBBO r14,r0,32,4                  // load latest duty cycle for channel
                QBA NOCHANGE4                    
 
             MAKELOW4:
                CLR r30.t0                      // make low 
-               LBBO r14,r0,12,4                  // load latest duty cycle for channel
+               LBBO r14,r0,32,4                  // load latest duty cycle for channel
                SUB r14,r16,r14                  // set timer = period - duty cycle
 
          NOCHANGE4:
@@ -185,18 +191,7 @@ START:
 
 
    ITERATIONS:
-      SUB    r1, r1, 1                 // take 1 away from the number of iterations
-      SUB    r15,r15, 1
-      QBNE   MESSAGE, r15, 0
+      MOV R31.b0, PRU0_R31_VEC_VALID | PRU_EVTOUT_0 // generate interrupt      
+      QBA   MEASURE
 
-         MOV r15,100000
-         MOV R31.b0, PRU0_R31_VEC_VALID | PRU_EVTOUT_1 // generate interrupt
-
-   MESSAGE:
-      QBNE   MEASURE, r1, 0            // loop if the no of iterations has not passed
-
-
-END:
-   MOV R31.b0, PRU0_R31_VEC_VALID | PRU_EVTOUT_0
-   HALT
 
