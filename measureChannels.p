@@ -35,21 +35,19 @@ START:
    MOV    r0, 0x00000008                  // going to write the result to this address 
    LBBO   r16, r0, 16, 4                  // load signal period (1/frequency) 51Hz(?) for Turnigy
 
-   MOV    r3, 0                           // r3 will store the echo pulse width for channel 1
+   MOV    r3, 1                        // r3 will store the echo pulse width for channel 1
    SBBO   r3, r0, 0, 4                    // initialize to 0
-   MOV    r4, 0                           // r4 will store the echo pulse width for channel 2
+   MOV    r4, 1                        // r4 will store the echo pulse width for channel 2
    SBBO   r4, r0, 4, 4                    // initialize to 0
-   MOV    r5, 0                           // r5 will store the echo pulse width for channel 3
+   MOV    r5, 1                        // r5 will store the echo pulse width for channel 3
    SBBO   r5, r0, 8, 4                    // initialize to 0
-   MOV    r6, 0                           // r6 will store the echo pulse width for channel 4
+   MOV    r6, 1                        // r6 will store the echo pulse width for channel 4
    SBBO   r6, r0, 12, 4                   // initialize to 0
 
-   MOV    r11,100000                      // init pwm period (large enough for 1 measurement to be made)
-   MOV    r12,100000                          
-   MOV    r13,100000                          
-   MOV    r14,100000                           
-
-
+   MOV    r11,200000                      // init pwm period (large enough for 1 measurement to be made)
+   MOV    r12,200000                          
+   MOV    r13,200000                          
+   MOV    r14,200000                           
 
    MEASURE:
 
@@ -117,7 +115,7 @@ START:
                                              // else flip signal
          QBBS MAKELOW1,r30.t15                // if high make low
 
-            MAKEHIGH1:                           // if low
+            MAKEHIGH1:                          // if low
                SET r30.t15                      // make high
                LBBO r11,r0,0,4                  // load latest duty cycle for channel
                QBA NOCHANGE1                    
@@ -136,7 +134,7 @@ START:
                                              // else flip signal
          QBBS MAKELOW2,r30.t14                // if high make low
 
-            MAKEHIGH2:                           // if low
+            MAKEHIGH2:                          // if low
                SET r30.t14                      // make high
                LBBO r12,r0,4,4                  // load latest duty cycle for channel
                QBA NOCHANGE2                    

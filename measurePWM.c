@@ -49,10 +49,10 @@ int  main (void)
    prussdrv_map_prumem(PRUSS0_PRU0_DATARAM, &pru0DataMemory);
    pru0DataMemory_int = (unsigned int *) pru0DataMemory;
    // Use the first 4 bytes for the number of samples
-   *pru0DataMemory_int = 10000000;
+   *pru0DataMemory_int = 1000000000;
 
    // Period
-   *(pru0DataMemory_int+6) = 8330;
+   *(pru0DataMemory_int+6) = 216346;
 
    // Load and execute binary on PRU
    prussdrv_exec_program (PRU_NUM, "./measureChannels.bin");
