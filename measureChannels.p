@@ -14,19 +14,23 @@
 #define PRU_EVTOUT_0	    3
 #define PRU_EVTOUT_1	    4
 
+// r1 : iteration counter
+// r0 : store location
+// r3 : channel 1 timer
+
+
 START:
    // Read number of samples to read
    MOV    r0, 0x00000000                  //load the memory location, number of samples
    LBBO   r1, r0, 0, 4                    //load the value into memory - keep r1
-   MOV    r0, 0x00000008                  // going to write the result to this address
-
-TRIGGERING:                     
+   MOV    r0, 0x00000008                  // going to write the result to this address                   
    MOV    r3, 0                           // r3 will store the echo pulse width for channel 1
+   SBBO   r3, r0, 0, 4                    // if pulse is done (not high) store to memory
 
    MEASURE:                    
-      QBBS ADDCHAN1, r31.t3               // If r31.t3 is high start counting (measuring echo pulse width)
+      QBBS ADDCHAN1, r31.t3               // If r31.t3 is high then count (measuring echo pulse width)
                                          
-         QBBS NOPULSE1, r3                // if pulse has not started do nothing
+         QBEQ NOPULSE1, r3, 0             // if pulse has not started do nothing
       
             SBBO   r3, r0, 0, 4           // if pulse is done (not high) store to memory
             MOV    r3, -1                 // reset channel 1 counter ( -1 since ADDCHAN adds 1 after)
@@ -37,7 +41,7 @@ TRIGGERING:
 
       NOPULSE1:
          SUB    r1, r1, 1                 // take 1 away from the number of iterations
-         QBNE   MEASURE, r1, 0         // loop if the no of iterations has not passed
+         QBNE   MEASURE, r1, 0            // loop if the no of iterations has not passed
 
 END:
    MOV R31.b0, PRU0_R31_VEC_VALID | PRU_EVTOUT_0

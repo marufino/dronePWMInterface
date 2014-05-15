@@ -17,8 +17,8 @@ static unsigned int *pru0DataMemory_int;
 void *threadFunction(void *value){
    do {
       int notimes = prussdrv_pru_wait_event (PRU_EVTOUT_1);
-      float frequency = (float)*(pru0DataMemory_int+2);
-      printf("Frequency is %f Hz \r", frequency);
+      float period = (float)*(pru0DataMemory_int+2);
+      printf("period is %f s \r", period);
       prussdrv_pru_clear_event (PRU_EVTOUT_1, PRU0_ARM_INTERRUPT);
    } while (1);
 }
@@ -44,12 +44,10 @@ int  main (void)
    prussdrv_map_prumem(PRUSS0_PRU0_DATARAM, &pru0DataMemory);
    pru0DataMemory_int = (unsigned int *) pru0DataMemory;
    // Use the first 4 bytes for the number of samples
-   *pru0DataMemory_int = 500;
-   // Use the second 4 bytes for the sample delay in ms
-   *(pru0DataMemory_int+1) = 100;   // 2 milli seconds between samples
+   *pru0DataMemory_int = 10000000;
 
    // Load and execute binary on PRU
-   prussdrv_exec_program (PRU_NUM, "./measurePWM.bin");
+   prussdrv_exec_program (PRU_NUM, "./measureChannels.bin");
    if(pthread_create(&thread, NULL, &threadFunction, NULL)){
        printf("Failed to create thread!");
    }
@@ -57,12 +55,10 @@ int  main (void)
    printf("PRU program completed, event number %d.\n", n);
    printf("The data that is in memory is:\n");
    printf("- the number of samples used is %d.\n", *pru0DataMemory_int);
-   printf("- the time delay used is %d.\n", *(pru0DataMemory_int+1));
 
-   // raw_distance is in 10ns samples
-   // distance in inches = time (ms) / 148 according to datasheet
-   int frequency = *(pru0DataMemory_int+2);
-   printf("Frequency is %d Hz \n", frequency);
+   // number of loops = period
+   float period = (float)*(pru0DataMemory_int+2);
+   printf("period is %f s \n", (period*2)/100);
 
    /* Disable PRU and close memory mappings */
    prussdrv_pru_disable(PRU_NUM);

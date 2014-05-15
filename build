@@ -1,6 +1,7 @@
 #!/bin/sh
 pasm -b measurePWM.p
 pasm -b pwm.p
+pasm -b measureChannels.p
 
 gcc measurePWM.c -o measurePWM -lpthread -lprussdrv
 gcc pwm.c -o pwm -lpthread -lprussdrv
