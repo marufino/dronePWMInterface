@@ -14,16 +14,19 @@
 static void *pru0DataMemory;
 static unsigned int *pru0DataMemory_int, *period;
 
+volatile float period1;
+volatile float period2;
+volatile float period3;
+volatile float period4;
+
 void *threadFunction(void *value){
    do {
       int notimes = prussdrv_pru_wait_event (PRU_EVTOUT_1);
-      float period1 = (float)*(pru0DataMemory_int+2);
-      float period2 = (float)*(pru0DataMemory_int+3);
-      float period3 = (float)*(pru0DataMemory_int+4);
-      float period4 = (float)*(pru0DataMemory_int+5);
-      printf("periods are Ch1: %f s , Ch2: %f s , Ch3: %f s , Ch4: %f s \r", period1, period2, period3, period4);
-
-
+      period1 = (float)*(pru0DataMemory_int+2);
+      period2 = (float)*(pru0DataMemory_int+3);
+      period3 = (float)*(pru0DataMemory_int+4);
+      period4 = (float)*(pru0DataMemory_int+5);
+      printf("%d periods are Ch1: %f s , Ch2: %f s , Ch3: %f s , Ch4: %f s \r",notimes, period1, period2, period3, period4);
       prussdrv_pru_clear_event (PRU_EVTOUT_1, PRU0_ARM_INTERRUPT);
    } while (1);
 }
