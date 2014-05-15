@@ -44,8 +44,6 @@ START:
    MOV    r6, 1                        // r6 will store the echo pulse width for channel 4
    SBBO   r6, r0, 12, 4                   // initialize to 0                          
 
-   MOV r15,10000000
-
    MEASURE:
 
       CHANNEL1:               
@@ -56,6 +54,7 @@ START:
                SBBO   r3, r0, 0, 4           // if pulse is done (not high) store to memory
                MOV    r3, -1                 // reset channel counter ( -1 since ADDCHAN adds 1 after)
                //MOV R31.b0, PRU0_R31_VEC_VALID | PRU_EVTOUT_1 // generate interrupt
+
 
 
          ADDCHAN1:
@@ -106,7 +105,6 @@ START:
          NOPULSE4:
 
 
-
    GENERATE:
 
       GEN1:
@@ -118,7 +116,6 @@ START:
                SET r30.t15                      // make high
                LBBO r11,r0,0,4                  // load latest duty cycle for channel
                QBA NOCHANGE1                    
-
 
             MAKELOW1:
                CLR r30.t15                      // make low 

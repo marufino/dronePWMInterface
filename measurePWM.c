@@ -13,11 +13,14 @@
 
 static void *pru0DataMemory;
 static unsigned int *pru0DataMemory_int, *period;
+<<<<<<< HEAD
 
 volatile float period1;
 volatile float period2;
 volatile float period3;
 volatile float period4;
+=======
+>>>>>>> df0a10d8c5241c812c3fa7e58a1a191ca1698652
 
 void *threadFunction(void *value){
    do {
@@ -52,10 +55,17 @@ int  main (void)
    prussdrv_map_prumem(PRUSS0_PRU0_DATARAM, &pru0DataMemory);
    pru0DataMemory_int = (unsigned int *) pru0DataMemory;
    // Use the first 4 bytes for the number of samples
+<<<<<<< HEAD
    *pru0DataMemory_int = 1000000000;
 
    // Period
    *(pru0DataMemory_int+6) = 216346;
+=======
+   *pru0DataMemory_int = 10000000;
+
+   // Period
+   *(pru0DataMemory_int+6) = 8330;
+>>>>>>> df0a10d8c5241c812c3fa7e58a1a191ca1698652
 
    // Load and execute binary on PRU
    prussdrv_exec_program (PRU_NUM, "./measureChannels.bin");
