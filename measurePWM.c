@@ -17,8 +17,13 @@ static unsigned int *pru0DataMemory_int;
 void *threadFunction(void *value){
    do {
       int notimes = prussdrv_pru_wait_event (PRU_EVTOUT_1);
-      float period = (float)*(pru0DataMemory_int+2);
-      printf("period is %f s \r", period);
+      float period1 = (float)*(pru0DataMemory_int+2);
+      float period2 = (float)*(pru0DataMemory_int+3);
+      float period3 = (float)*(pru0DataMemory_int+4);
+      float period4 = (float)*(pru0DataMemory_int+5);
+      printf("periods are Ch1: %f s , Ch2: %f s , Ch3: %f s , Ch4: %f s \r", period1, period2, period3, period4);
+
+
       prussdrv_pru_clear_event (PRU_EVTOUT_1, PRU0_ARM_INTERRUPT);
    } while (1);
 }
@@ -44,7 +49,7 @@ int  main (void)
    prussdrv_map_prumem(PRUSS0_PRU0_DATARAM, &pru0DataMemory);
    pru0DataMemory_int = (unsigned int *) pru0DataMemory;
    // Use the first 4 bytes for the number of samples
-   *pru0DataMemory_int = 10000000;
+   *pru0DataMemory_int = 1000000;
 
    // Load and execute binary on PRU
    prussdrv_exec_program (PRU_NUM, "./measureChannels.bin");
@@ -57,8 +62,11 @@ int  main (void)
    printf("- the number of samples used is %d.\n", *pru0DataMemory_int);
 
    // number of loops = period
-   float period = (float)*(pru0DataMemory_int+2);
-   printf("period is %f s \n", (period*2)/100);
+   float period1 = (float)*(pru0DataMemory_int+2);
+   float period2 = (float)*(pru0DataMemory_int+3);
+   float period3 = (float)*(pru0DataMemory_int+4);
+   float period4 = (float)*(pru0DataMemory_int+5);
+   printf("periods are Ch1: %f s , Ch2: %f s , Ch3: %f s , Ch4: %f s \n", period1, period2, period3, period4);
 
    /* Disable PRU and close memory mappings */
    prussdrv_pru_disable(PRU_NUM);
