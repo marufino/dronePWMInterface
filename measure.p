@@ -44,10 +44,6 @@ START:
    MOV    r6, 0                           // r6 will store the echo pulse width for channel 4
    SBBO   r6, r0, 12, 4                   // initialize to 0
 
-   MOV    r11,100000                      // init pwm period (large enough for 1 measurement to be made)
-   MOV    r12,100000                          
-   MOV    r13,100000                          
-   MOV    r14,100000                           
 
    MEASURE:
 
@@ -59,7 +55,6 @@ START:
                SBBO   r3, r0, 0, 4           // if pulse is done (not high) store to memory
                MOV    r3, -1                 // reset channel counter ( -1 since ADDCHAN adds 1 after)
                MOV R31.b0, PRU0_R31_VEC_VALID | PRU_EVTOUT_1 // generate interrupt
-
 
          ADDCHAN1:
             ADD r3, r3, 1                    // Increment channel counter
@@ -107,84 +102,6 @@ START:
             ADD r6, r6, 1                    // Increment channel counter
 
          NOPULSE4:
-
-   GENERATE:
-
-      GEN1:
-         QBNE NOCHANGE1,r11,0                // if timer isn't 0 skip ( signal doesn't need to be changed)
-                                             // else flip signal
-         QBBS MAKELOW1,r30.t15                // if high make low
-
-            MAKEHIGH1:                           // if low
-               SET r30.t15                      // make high
-               LBBO r11,r0,0,4                  // load latest duty cycle for channel
-               QBA NOCHANGE1                    
-
-            MAKELOW1:
-               CLR r30.t15                      // make low 
-               LBBO r11,r0,0,4                  // load latest duty cycle for channel
-               SUB r11,r16,r11                  // set timer = period - duty cycle
-
-         NOCHANGE1:
-         SUB r11,r11,1                          // decrement counter
-
-
-      GEN2:
-         QBNE NOCHANGE2,r12,0                // if timer isn't 0 skip ( signal doesn't need to be changed)
-                                             // else flip signal
-         QBBS MAKELOW2,r30.t14                // if high make low
-
-            MAKEHIGH2:                           // if low
-               SET r30.t14                      // make high
-               LBBO r12,r0,4,4                  // load latest duty cycle for channel
-               QBA NOCHANGE2                    
-
-            MAKELOW2:
-               CLR r30.t14                      // make low 
-               LBBO r12,r0,4,4                  // load latest duty cycle for channel
-               SUB r12,r16,r12                  // set timer = period - duty cycle
-
-         NOCHANGE2:
-         SUB r12,r12,1                          // decrement counter
-
-
-      GEN3:
-         QBNE NOCHANGE3,r13,0                // if timer isn't 0 skip ( signal doesn't need to be changed)
-                                             // else flip signal
-         QBBS MAKELOW3,r30.t7                // if high make low
-
-            MAKEHIGH3:                           // if low
-               SET r30.t7                      // make high
-               LBBO r13,r0,8,4                  // load latest duty cycle for channel
-               QBA NOCHANGE3                    
-
-            MAKELOW3:
-               CLR r30.t7                      // make low 
-               LBBO r13,r0,8,4                  // load latest duty cycle for channel
-               SUB r13,r16,r13                  // set timer = period - duty cycle
-
-         NOCHANGE3:
-         SUB r13,r13,1                          // decrement counter
-
-
-      GEN4:
-         QBNE NOCHANGE4,r14,0                // if timer isn't 0 skip ( signal doesn't need to be changed)
-                                             // else flip signal
-         QBBS MAKELOW4,r30.t0                // if high make low
-
-            MAKEHIGH4:                           // if low
-               SET r30.t0                      // make high
-               LBBO r14,r0,12,4                  // load latest duty cycle for channel
-               QBA NOCHANGE4                    
-
-            MAKELOW4:
-               CLR r30.t0                      // make low 
-               LBBO r14,r0,12,4                  // load latest duty cycle for channel
-               SUB r14,r16,r14                  // set timer = period - duty cycle
-
-         NOCHANGE4:
-         SUB r14,r14,1                          // decrement counter
-
 
 
    ITERATIONS:
